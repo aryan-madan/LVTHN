@@ -1,17 +1,17 @@
 import paperBg from '../../assets/desk/paper.png'
 import cassetteBg from '../../assets/desk/cassette.png'
 
-type props = {
+type Props = {
   item: {
     name: string
-    type: 'doc' | 'audio' | 'photo'
+    type: string
     content: string
   }
   close: () => void
 }
 
-export default function Modal({ item, close }: props) {
-  const handleBackdropClick = (e: React.MouseEvent) => {
+export default function Modal({ item, close }: Props) {
+  const handleClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       close()
     }
@@ -19,7 +19,7 @@ export default function Modal({ item, close }: props) {
 
   return (
     <div
-      onClick={handleBackdropClick}
+      onClick={handleClick}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6 font-sans cursor-pointer"
     >
       {item.type === 'doc' && (
