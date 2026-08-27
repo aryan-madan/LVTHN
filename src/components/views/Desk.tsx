@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import view from '../../assets/desk/desk.png'
+import sound from '../../assets/desk/audio.mp3'
 import Modal from '../ui/Modal'
+import Radio from '../ui/Radio'
 
 type Item = {
   id: string
@@ -13,18 +15,20 @@ type Item = {
 }
 
 const data: Item[] = [
-  { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: '-150, -164\nSTATUS: LOST\nNOTE: Do not respond.' },
+  { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: 'RADIO STATUS: LOST, \nNOTE: Do not respond.' },
   { id: '2', name: 'Audio', type: 'audio', x: 700, y: 220, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
   { id: '3', name: 'Photo', type: 'photo', x: 450, y: 420, icon: 'src/assets/emojis/photo.png', content: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80' },
   { id: '4', name: 'Key', type: 'doc', x: 250, y: 500, icon: 'src/assets/emojis/key.png', content: 'PROJLVTHN' },
-  { id: '5', name: 'Objectives', type: 'doc', x: 850, y: 150, icon: 'src/assets/emojis/note.png', content: 'OBJECTIVES:\n[ ] Listen to audio pulse\n[ ] Find the project key\n[ ] Check coordinates on log' }
+  { id: '5', name: 'Objectives', type: 'doc', x: 850, y: 150, icon: 'src/assets/emojis/note.png', content: 'OBJECTIVES:\n[ ] Listen to audio pulse\n[ ] Find the project key\n[ ] Check coordinates on log' },
+  { id: '6', name: 'Radio', type: 'radio', x: 550, y: 180, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' }
 ]
 
 export default function Desk() {
-  const [list, setList] = useState<Item[]>(data)
-  const [modal, setModal] = useState<Item | null>(null)
-  const [pos, setPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
-  const [size, setSize] = useState(600)
+  const [list, set] = useState<Item[]>(data)
+  const [modal, mod] = useState<Item | null>(null)
+  const [show, vis] = useState(false)
+  const [pos, setpos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
+  const [size, setsz] = useState(600)
   
   const drag = useRef<string | null>(null)
   const start = useRef({ x: 0, y: 0 })
@@ -32,11 +36,11 @@ export default function Desk() {
   const moved = useRef(false)
 
   useEffect(() => {
-    let t1 = setTimeout(() => setSize(150), 100)
-    let t2 = setTimeout(() => setSize(400), 200)
-    let t3 = setTimeout(() => setSize(180), 350)
-    let t4 = setTimeout(() => setSize(300), 450)
-    let t5 = setTimeout(() => setSize(220), 600)
+    let t1 = setTimeout(() => setsz(150), 100)
+    let t2 = setTimeout(() => setsz(400), 200)
+    let t3 = setTimeout(() => setsz(180), 350)
+    let t4 = setTimeout(() => setsz(300), 450)
+    let t5 = setTimeout(() => setsz(220), 600)
 
     return () => {
       clearTimeout(t1)
@@ -48,32 +52,23 @@ export default function Desk() {
   }, [])
 
   function play() {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.type = 'sine'
-    osc.frequency.setValueAtTime(600, ctx.currentTime)
-    gain.gain.setValueAtTime(0.1, ctx.currentTime)
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.start()
-
-    const pattern = [100, 100, 100, 300, 300, 300, 100, 100, 100]
-    let time = ctx.currentTime
-
-    pattern.forEach((dur, idx) => {
-      if (idx % 2 === 0) {
-        gain.gain.setValueAtTime(0.1, time)
-      } else {
-        gain.gain.setValueAtTime(0, time)
-      }
-      time += dur / 1000
-    })
-
-    setTimeout(() => {
-      osc.stop()
-      ctx.close()
-    }, (time - ctx.currentTime) * 1000)
+    setTimeout(async () => {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const res = await fetch(sound)
+      const buf = await res.arrayBuffer()
+      const dec = await ctx.decodeAudioData(buf)
+      const src = ctx.createBufferSource()
+      src.buffer = dec
+      const gain = ctx.createGain()
+      gain.gain.value = 3.0
+      src.connect(gain)
+      gain.connect(ctx.destination)
+      src.start()
+      setTimeout(() => {
+        src.stop()
+        ctx.close()
+      }, 4000)
+    }, 2000)
   }
 
   function down(e: React.MouseEvent, item: Item) {
@@ -85,22 +80,24 @@ export default function Desk() {
   }
 
   function move(e: React.MouseEvent) {
-    setPos({ x: e.clientX, y: e.clientY })
+    setpos({ x: e.clientX, y: e.clientY })
 
     if (!drag.current) return
     const dist = Math.hypot(e.clientX - start.current.x, e.clientY - start.current.y)
     if (dist > 3) moved.current = true
     const newX = e.clientX - shift.current.x
     const newY = e.clientY - shift.current.y
-    setList(list.map(i => i.id === drag.current ? { ...i, x: newX, y: newY } : i))
+    set(list.map(i => i.id === drag.current ? { ...i, x: newX, y: newY } : i))
   }
 
   function up(item: Item) {
     if (!moved.current) {
       if (item.type === 'audio') {
         play()
+      } else if (item.type === 'radio') {
+        vis(true)
       } else {
-        setModal(item)
+        mod(item)
       }
     }
     drag.current = null
@@ -112,6 +109,16 @@ export default function Desk() {
       onMouseUp={() => { drag.current = null }}
       className="relative h-screen w-screen overflow-hidden bg-black select-none font-sans cursor-crosshair"
     >
+      <style>{`
+        @font-face {
+          font-family: 'RockyBilly';
+          src: url('src/assets/fonts/rockybilly.ttf') format('truetype');
+        }
+        .handwritten {
+          font-family: 'RockyBilly', sans-serif;
+        }
+      `}</style>
+
       <div className="absolute inset-0 z-0">
         <img
           src={view}
@@ -134,7 +141,7 @@ export default function Desk() {
             draggable={false}
             className="w-24 h-24 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] pointer-events-none"
           />
-          <span className="text-xs text-white/80 bg-black/85 border border-white/10 px-2 py-0.5 mt-1 pointer-events-none shadow-lg">
+          <span className="text-sm text-white/90 bg-black/85 border border-white/10 px-2.5 py-0.5 mt-1 pointer-events-none shadow-lg handwritten tracking-wide">
             {i.name}
           </span>
         </div>
@@ -147,15 +154,8 @@ export default function Desk() {
         }}
       />
 
-      <div 
-        className="absolute inset-0 z-30 pointer-events-none opacity-30 mix-blend-overlay"
-        style={{
-          backgroundImage: `repeating-linear-gradient(0deg, #000, #000 2px, transparent 2px, transparent 4px), repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px)`,
-          backgroundSize: '4px 4px'
-        }}
-      />
-
-      {modal && <Modal item={modal} close={() => setModal(null)} />}
+      {modal && <Modal item={modal} close={() => mod(null)} />}
+      {show && <Radio close={() => vis(false)} />}
     </main>
   )
 }
