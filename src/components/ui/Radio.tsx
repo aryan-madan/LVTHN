@@ -69,7 +69,10 @@ export default function Radio({ close }: Props) {
   }
 
   return (
-    <div onClick={e => { if (e.target === e.currentTarget) handleClose() }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-mono select-none">
+    <div 
+      onClick={handleClose} 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-mono select-none"
+    >
       <style>{`
         @font-face {
           font-family: 'MiniSystem';
@@ -89,12 +92,10 @@ export default function Radio({ close }: Props) {
         }
       `}</style>
 
-      <div className="w-[420px] bg-neutral-900 border border-neutral-700 rounded-md overflow-hidden shadow-2xl flex flex-col">
-
-        <div className="flex justify-between items-center bg-neutral-950 px-4 py-2 border-b border-neutral-800 text-xs text-neutral-400">
-          <span>RF919</span>
-          <button onClick={handleClose} className="hover:text-white px-1">✕</button>
-        </div>
+      <div 
+        onClick={e => e.stopPropagation()}
+        className="relative w-[420px] bg-neutral-900 border border-neutral-700 rounded-md overflow-hidden shadow-2xl flex flex-col"
+      >
 
         <div className="p-5 flex flex-col gap-4 bg-neutral-900">
           <div className="bg-black border border-neutral-800 rounded p-4 flex flex-col gap-2">
@@ -124,7 +125,7 @@ export default function Radio({ close }: Props) {
               step="0.1"
               value={currentFreq}
               onChange={handleSlider}
-              className="w-full accent-cyan-400 cursor-pointer"
+              className="w-full accent-cyan-400"
             />
           </div>
         </div>

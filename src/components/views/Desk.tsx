@@ -3,6 +3,7 @@ import view from '../../assets/desk/desk.png'
 import sound from '../../assets/desk/audio.mp3'
 import Modal from '../ui/Modal'
 import Radio from '../ui/Radio'
+import Computer from '../ui/Computer'
 
 type Item = {
   id: string
@@ -14,19 +15,35 @@ type Item = {
   content: string
 }
 
-const data: Item[] = [
-  { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: 'RADIO STATUS: LOST, \nNOTE: Do not respond.' },
-  { id: '2', name: 'Audio', type: 'audio', x: 700, y: 220, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
-  { id: '3', name: 'Photo', type: 'photo', x: 450, y: 420, icon: 'src/assets/emojis/photo.png', content: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80' },
-  { id: '4', name: 'Key', type: 'doc', x: 250, y: 500, icon: 'src/assets/emojis/key.png', content: 'PROJLVTHN' },
-  { id: '5', name: 'Objectives', type: 'doc', x: 850, y: 150, icon: 'src/assets/emojis/note.png', content: 'OBJECTIVES:\n[ ] Listen to audio pulse\n[ ] Find the project key\n[ ] Check coordinates on log' },
-  { id: '6', name: 'Radio', type: 'radio', x: 550, y: 180, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' }
-]
-
 export default function Desk() {
-  const [list, set] = useState<Item[]>(data)
+  const [audioPlayed, setAudioPlayed] = useState(false)
+  const [keyFound, setKeyFound] = useState(false)
+  const [radioFound, setRadioFound] = useState(false)
+
+  const getObjectivesContent = () => {
+    return `OBJECTIVES:
+[${audioPlayed ? 'X' : ' '}] Listen to audio pulse
+[${keyFound ? 'X' : ' '}] Find the project key
+[${radioFound ? 'X' : ' '}] Broadcast emergency signal`
+  }
+
+  const [list, set] = useState<Item[]>([
+    { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: 'RADIO STATUS: LOST, \nNOTE: Do not respond.' },
+    { id: '2', name: 'Audio', type: 'audio', x: 700, y: 220, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
+    { id: '3', name: 'Photo', type: 'photo', x: 450, y: 420, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
+    { id: '4', name: 'Key', type: 'doc', x: 250, y: 500, icon: 'src/assets/emojis/key.png', content: 'PROJLVTHN' },
+    { id: '5', name: 'Objectives', type: 'doc', x: 850, y: 150, icon: 'src/assets/emojis/note.png', content: '' },
+    { id: '6', name: 'Radio', type: 'radio', x: 550, y: 180, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
+    { id: '7', name: 'Computer', type: 'computer', x: 350, y: 150, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
+  ])
+
+  useEffect(() => {
+    set(prev => prev.map(i => i.id === '5' ? { ...i, content: getObjectivesContent() } : i))
+  }, [audioPlayed, keyFound, radioFound])
+
   const [modal, mod] = useState<Item | null>(null)
   const [show, vis] = useState(false)
+  const [showComp, visComp] = useState(false)
   const [pos, setpos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
   const [size, setsz] = useState(600)
   
@@ -42,16 +59,26 @@ export default function Desk() {
     let t4 = setTimeout(() => setsz(300), 450)
     let t5 = setTimeout(() => setsz(220), 600)
 
+    const flickerInterval = setInterval(() => {
+      if (Math.random() > 0.4) {
+        const randomSize = Math.floor(Math.random() * 250) + 100
+        setsz(randomSize)
+        setTimeout(() => setsz(220), Math.random() * 120 + 50)
+      }
+    }, 300)
+
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
       clearTimeout(t3)
       clearTimeout(t4)
       clearTimeout(t5)
+      clearInterval(flickerInterval)
     }
   }, [])
 
   function play() {
+    setAudioPlayed(true)
     setTimeout(async () => {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
       const res = await fetch(sound)
@@ -96,7 +123,13 @@ export default function Desk() {
         play()
       } else if (item.type === 'radio') {
         vis(true)
+        setRadioFound(true)
+      } else if (item.type === 'computer') {
+        visComp(true)
       } else {
+        if (item.id === '4') {
+          setKeyFound(true)
+        }
         mod(item)
       }
     }
@@ -156,6 +189,7 @@ export default function Desk() {
 
       {modal && <Modal item={modal} close={() => mod(null)} />}
       {show && <Radio close={() => vis(false)} />}
+      {showComp && <Computer close={() => visComp(false)} />}
     </main>
   )
 }
