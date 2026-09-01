@@ -14,7 +14,7 @@ export default function Computer({ close, unlock }: Props) {
 
   function submit(event: React.FormEvent) {
     event.preventDefault()
-    if (text.toUpperCase() === 'PROJLVTHN') {
+    if (text.toUpperCase() === 'LVTHN1620') {
       setUnlocked(true)
       unlock()
     } else {

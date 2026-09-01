@@ -25,29 +25,29 @@ export default function Desk() {
   const [radioFound, setRadioFound] = useState(false)
   const [computerUnlocked, setComputerUnlocked] = useState(false)
   const [radioFreqFound, setRadioFreqFound] = useState(false)
+  const [logRead, setLogRead] = useState(false)
 
-  const buildObjectivesContent = () => {
-    return `CASE NOTES:
+  const objectivesContent = `CASE NOTES:
 [${audioPlayed ? 'X' : ' '}] Listen to audio tape
+[${logRead ? 'X' : ' '}] Inspect the torn log riddle
 [${keyFound ? 'X' : ' '}] Find the project key
 [${radioFound ? 'X' : ' '}] Inspect radio unit
 [${radioFreqFound ? 'X' : ' '}] Find distress frequency
 [${computerUnlocked ? 'X' : ' '}] Unlock terminal`
-  }
 
   const [list, setList] = useState<Item[]>([
-    { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: 'RADIO STATUS: LOST, \nNOTE: Do not respond.' },
-    { id: '2', name: 'Audio', type: 'audio', x: 700, y: 220, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
-    { id: '3', name: 'Photo', type: 'photo', x: 450, y: 420, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
-    { id: '4', name: 'Key', type: 'doc', x: 250, y: 500, icon: 'src/assets/emojis/key.png', content: 'PROJLVTHN' },
-    { id: '5', name: 'Objectives', type: 'doc', x: 850, y: 150, icon: 'src/assets/emojis/note.png', content: '' },
-    { id: '6', name: 'Radio', type: 'radio', x: 550, y: 180, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
-    { id: '7', name: 'Computer', type: 'computer', x: 350, y: 150, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
+    { id: '1', name: 'Log', type: 'doc', x: 880, y: 320, icon: 'src/assets/emojis/doc.png', content: '"Four letters carved into the iron hull, followed by the exact year the abyss answered back. Cornelis thought he could control the depths, for James and his Thames."\n\nWARNING: Do not reply.' },
+    { id: '2', name: 'Audio', type: 'audio', x: 1050, y: 480, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
+    { id: '3', name: 'Photo', type: 'photo', x: 720, y: 550, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
+    { id: '4', name: 'Key', type: 'doc', x: 1180, y: 280, icon: 'src/assets/emojis/key.png', content: 'LVTHNXXXX' },
+    { id: '5', name: 'Objectives', type: 'doc', x: 1350, y: 200, icon: 'src/assets/emojis/note.png', content: objectivesContent },
+    { id: '6', name: 'Radio', type: 'radio', x: 950, y: 620, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
+    { id: '7', name: 'Computer', type: 'computer', x: 650, y: 180, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
   ])
 
   useEffect(() => {
-    setList(prev => prev.map(i => i.id === '5' ? { ...i, content: buildObjectivesContent() } : i))
-  }, [audioPlayed, keyFound, radioFound, computerUnlocked, radioFreqFound])
+    setList(prev => prev.map(i => i.id === '5' ? { ...i, content: objectivesContent } : i))
+  }, [objectivesContent])
 
   const [modalItem, setModalItem] = useState<Item | null>(null)
   const [showRadio, setShowRadio] = useState(false)
@@ -138,12 +138,15 @@ export default function Desk() {
       } else if (item.type === 'computer') {
         setShowComputer(true)
       } else {
+        if (item.id === '1') {
+          setLogRead(true)
+        }
         if (item.id === '4') {
           setKeyFound(true)
         }
         setModalItem(item)
 
-        if (item.id === '5' && audioPlayed && keyFound && radioFound && computerUnlocked && radioFreqFound) {
+        if (item.id === '5' && audioPlayed && logRead && keyFound && radioFound && computerUnlocked && radioFreqFound) {
           setTimeout(() => {
             setModalItem(null)
             setPhase('mid')
@@ -157,7 +160,7 @@ export default function Desk() {
   if (phase === 'intro') {
     return (
       <Story 
-        text={`PPROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work. (TIP: SET YOUR VOLUME TO FULL)`}
+        text={`PROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work. (TIP: SET YOUR VOLUME TO FULL)`}
         label="START"
         next={() => setPhase('desk')} 
       />
@@ -167,7 +170,7 @@ export default function Desk() {
   if (phase === 'mid') {
     return (
       <Story 
-        text={`AAPOTHEOSIS\n\nI don't know what I've found. I don't know what to make of it. The Leviathan wasn't a submarine built in 1620, it was something they created. Something biological?\n\nThe anomaly is miles below the surface. I have to see if it's still down there.\n\nI know this might be stupid but this is my last message before I go down there. I love you.`}
+        text={`APOTHEOSIS\n\nI don't know what I've found. I don't know what to make of it. The Leviathan wasn't a submarine built in 1620, it was something they created. Something biological?\n\nThe anomaly is miles below the surface. I have to see if it's still down there.\n\nI know this might be stupid but this is my last message before I go down there. I love you.`}
         label="DIVE"
         next={() => setPhase('dive')} 
       />
