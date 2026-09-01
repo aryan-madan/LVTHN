@@ -4,7 +4,7 @@ This was made for [Zoneout!](https://zoneout.hackclub.com/)
 
 ## Overview
 
-You are a detective. You've spent days locked inside your room, surviving with nothing but scraps of food, and a torch. You're obsessed with the mystery of something called **"LVTHN"**.
+You are a detective named Kari. You've spent days locked inside your room, surviving with nothing but scraps of food, and a torch. You're obsessed with the mystery of something called **"LVTHN"**.
 
 Piece together the clues by listening to audios, and reading documents. 
 
