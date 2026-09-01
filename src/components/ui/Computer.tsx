@@ -60,8 +60,8 @@ export default function Computer({ close, onUnlock }: Props) {
               </button>
             </form>
           ) : (
-            <div className="font-bold text-center text-black text-xs leading-relaxed max-w-md">
-              In 1620 during the race to build a submarine, humans were tortured very badly and they were tortured to make something called the leviathan
+            <div className="font-bold text-center text-black text-sm leading-relaxed max-w-md">
+              The submarine was a cover. Human subjects were subjected to agonizing biological transmutation. We did not build a machine, we created this weird amalgamation between machine and man. We forged project LVTHN from their cries.
             </div>
           )}
 

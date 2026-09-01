@@ -5,6 +5,7 @@ import Modal from '../ui/Modal'
 import Radio from '../ui/Radio'
 import Computer from '../ui/Computer'
 import Dive from './Dive'
+import Story from '../ui/Story'
 
 type Item = {
   id: string
@@ -17,20 +18,21 @@ type Item = {
 }
 
 export default function Desk() {
+  const [phase, setPhase] = useState<'intro' | 'desk' | 'mid' | 'dive'>('intro')
+  
   const [audioPlayed, setAudioPlayed] = useState(false)
   const [keyFound, setKeyFound] = useState(false)
   const [radioFound, setRadioFound] = useState(false)
   const [computerUnlocked, setComputerUnlocked] = useState(false)
   const [radioFreqFound, setRadioFreqFound] = useState(false)
-  const [isCompleted, setIsCompleted] = useState(false)
 
   const getObjectivesContent = () => {
-    return `OBJECTIVES:
-[${audioPlayed ? 'X' : ' '}] Listen to audio pulse
+    return `CASE NOTES:
+[${audioPlayed ? 'X' : ' '}] Listen to audio tape
 [${keyFound ? 'X' : ' '}] Find the project key
 [${radioFound ? 'X' : ' '}] Inspect radio unit
-[${radioFreqFound ? 'X' : ' '}] Find radio frequency
-[${computerUnlocked ? 'X' : ' '}] Unlock computer terminal`
+[${radioFreqFound ? 'X' : ' '}] Find distress frequency
+[${computerUnlocked ? 'X' : ' '}] Unlock terminal`
   }
 
   const [list, set] = useState<Item[]>([
@@ -45,12 +47,6 @@ export default function Desk() {
 
   useEffect(() => {
     set(prev => prev.map(i => i.id === '5' ? { ...i, content: getObjectivesContent() } : i))
-    if (audioPlayed && keyFound && radioFound && computerUnlocked && radioFreqFound) {
-      const timeout = setTimeout(() => {
-        setIsCompleted(true)
-      }, 1500)
-      return () => clearTimeout(timeout)
-    }
   }, [audioPlayed, keyFound, radioFound, computerUnlocked, radioFreqFound])
 
   const [modal, mod] = useState<Item | null>(null)
@@ -65,6 +61,8 @@ export default function Desk() {
   const moved = useRef(false)
 
   useEffect(() => {
+    if (phase !== 'desk') return
+    
     let t1 = setTimeout(() => setsz(150), 100)
     let t2 = setTimeout(() => setsz(400), 200)
     let t3 = setTimeout(() => setsz(180), 350)
@@ -87,7 +85,7 @@ export default function Desk() {
       clearTimeout(t5)
       clearInterval(flickerInterval)
     }
-  }, [])
+  }, [phase])
 
   function play() {
     setAudioPlayed(true)
@@ -119,6 +117,7 @@ export default function Desk() {
   }
 
   function move(e: React.MouseEvent) {
+    if (phase !== 'desk') return
     setpos({ x: e.clientX, y: e.clientY })
 
     if (!drag.current) return
@@ -136,22 +135,47 @@ export default function Desk() {
       } else if (item.type === 'radio') {
         vis(true)
         setRadioFound(true)
-        setRadioFreqFound(true)
       } else if (item.type === 'computer') {
         visComp(true)
-        setComputerUnlocked(true)
       } else {
         if (item.id === '4') {
           setKeyFound(true)
         }
         mod(item)
+
+        if (item.id === '5' && audioPlayed && keyFound && radioFound && computerUnlocked && radioFreqFound) {
+          setTimeout(() => {
+            mod(null)
+            setPhase('mid')
+          }, 400)
+        }
       }
     }
     drag.current = null
   }
 
-  if (isCompleted) {
-    return <Dive open={() => setIsCompleted(false)} />
+  if (phase === 'intro') {
+    return (
+      <Story 
+        text={`PPROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work.`}
+        buttonText="START"
+        onNext={() => setPhase('desk')} 
+      />
+    )
+  }
+
+  if (phase === 'mid') {
+    return (
+      <Story 
+        text={`AAPOTHEOSIS\n\nI don't know what I've found. I don't know what to make of it. The Leviathan wasn't a submarine built in 1620, it was something they created. Something biological?\n\nThe anomaly is miles below the surface. I have to see if it's still down there.\n\nI know this might be stupid but this is my last message before I go down there. I love you.`}
+        buttonText="DIVE"
+        onNext={() => setPhase('dive')} 
+      />
+    )
+  }
+
+  if (phase === 'dive') {
+    return <Dive open={() => setPhase('desk')} />
   }
 
   return (
@@ -206,8 +230,8 @@ export default function Desk() {
       />
 
       {modal && <Modal item={modal} close={() => mod(null)} />}
-      {show && <Radio close={() => vis(false)} />}
-      {showComp && <Computer close={() => visComp(false)} />}
+      {show && <Radio close={() => vis(false)} onFreqFound={() => setRadioFreqFound(true)} />}
+      {showComp && <Computer close={() => visComp(false)} onUnlock={() => setComputerUnlocked(true)} />}
     </main>
   )
 }
