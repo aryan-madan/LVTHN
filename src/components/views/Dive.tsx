@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Meter from '../components/ui/Meter'
+import Meter from '../ui/Meter'
 
 type props = {
   open: () => void

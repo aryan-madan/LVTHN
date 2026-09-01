@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import clickSound from '../../assets/desk/click.mp3'
 import geigerSound from '../../assets/desk/geiger.mp3'
 import staticSound from '../../assets/desk/static.mp3'
 
 type Props = {
   close: () => void
+  onFreqFound?: () => void
 }
 
-export default function Radio({ close }: Props) {
+export default function Radio({ close, onFreqFound }: Props) {
   const [targetFreq, setTargetFreq] = useState<number>(104.2)
   const [currentFreq, setCurrentFreq] = useState<number>(88.0)
   const [message, setMessage] = useState(false)
@@ -46,6 +47,7 @@ export default function Radio({ close }: Props) {
 
     if (Math.abs(newFreq - targetFreq) < 0.2) {
       setMessage(true)
+      if (onFreqFound) onFreqFound()
       if (staticAudio.current) staticAudio.current.pause()
       if (geigerAudio.current) {
         geigerAudio.current.play().catch(() => { })

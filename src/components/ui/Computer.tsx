@@ -4,9 +4,10 @@ import incorrectSound from '../../assets/desk/incorrect.mp3'
 
 type Props = {
   close: () => void
+  onUnlock?: () => void
 }
 
-export default function Computer({ close }: Props) {
+export default function Computer({ close, onUnlock }: Props) {
   const [text, setText] = useState('')
   const [unlocked, setUnlocked] = useState(false)
   const incorrectAudio = useRef<HTMLAudioElement | null>(null)
@@ -15,6 +16,7 @@ export default function Computer({ close }: Props) {
     e.preventDefault()
     if (text.toUpperCase() === 'PROJLVTHN') {
       setUnlocked(true)
+      if (onUnlock) onUnlock()
     } else {
       if (!incorrectAudio.current) {
         incorrectAudio.current = new Audio(incorrectSound)

@@ -4,6 +4,7 @@ import sound from '../../assets/desk/audio.mp3'
 import Modal from '../ui/Modal'
 import Radio from '../ui/Radio'
 import Computer from '../ui/Computer'
+import Dive from './Dive'
 
 type Item = {
   id: string
@@ -19,12 +20,17 @@ export default function Desk() {
   const [audioPlayed, setAudioPlayed] = useState(false)
   const [keyFound, setKeyFound] = useState(false)
   const [radioFound, setRadioFound] = useState(false)
+  const [computerUnlocked, setComputerUnlocked] = useState(false)
+  const [radioFreqFound, setRadioFreqFound] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(false)
 
   const getObjectivesContent = () => {
     return `OBJECTIVES:
 [${audioPlayed ? 'X' : ' '}] Listen to audio pulse
 [${keyFound ? 'X' : ' '}] Find the project key
-[${radioFound ? 'X' : ' '}] Broadcast emergency signal`
+[${radioFound ? 'X' : ' '}] Inspect radio unit
+[${radioFreqFound ? 'X' : ' '}] Find radio frequency
+[${computerUnlocked ? 'X' : ' '}] Unlock computer terminal`
   }
 
   const [list, set] = useState<Item[]>([
@@ -39,7 +45,13 @@ export default function Desk() {
 
   useEffect(() => {
     set(prev => prev.map(i => i.id === '5' ? { ...i, content: getObjectivesContent() } : i))
-  }, [audioPlayed, keyFound, radioFound])
+    if (audioPlayed && keyFound && radioFound && computerUnlocked && radioFreqFound) {
+      const timeout = setTimeout(() => {
+        setIsCompleted(true)
+      }, 1500)
+      return () => clearTimeout(timeout)
+    }
+  }, [audioPlayed, keyFound, radioFound, computerUnlocked, radioFreqFound])
 
   const [modal, mod] = useState<Item | null>(null)
   const [show, vis] = useState(false)
@@ -124,8 +136,10 @@ export default function Desk() {
       } else if (item.type === 'radio') {
         vis(true)
         setRadioFound(true)
+        setRadioFreqFound(true)
       } else if (item.type === 'computer') {
         visComp(true)
+        setComputerUnlocked(true)
       } else {
         if (item.id === '4') {
           setKeyFound(true)
@@ -134,6 +148,10 @@ export default function Desk() {
       }
     }
     drag.current = null
+  }
+
+  if (isCompleted) {
+    return <Dive open={() => setIsCompleted(false)} />
   }
 
   return (
