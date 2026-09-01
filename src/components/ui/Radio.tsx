@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import click from '../../assets/desk/click.mp3'
-import geiger from '../../assets/desk/geiger.mp3'
-import staticAudio from '../../assets/desk/static.mp3'
+import click from '/assets/desk/click.mp3'
+import geiger from '/assets/desk/geiger.mp3'
+import staticAudio from '/assets/desk/static.mp3'
 
 type Props = {
   close: () => void

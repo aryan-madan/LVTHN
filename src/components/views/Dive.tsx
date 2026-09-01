@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import sound from '../../assets/dive/death.mp3'
+import sound from '/assets/dive/death.mp3'
 
 type Props = {
   open: () => void

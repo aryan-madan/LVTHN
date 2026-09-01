@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import paper from '../../assets/desk/paper.png'
-import cassette from '../../assets/desk/cassette.png'
+import paper from '/assets/desk/paper.png'
+import cassette from '/assets/desk/cassette.png'
 
 type Props = {
   item: {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Desk from './components/views/Desk'
-import clickSound from './assets/global/clicking.mp3'
-import heartSound from './assets/global/heartbeat.mp3'
+import clickSound from '/assets/global/clicking.mp3'
+import heartSound from '/assets/global/heartbeat.mp3'
 
 export default function App() {
   const clickRef = useRef<HTMLAudioElement | null>(null)

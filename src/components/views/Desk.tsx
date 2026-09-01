@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import deskView from '../../assets/desk/desk.png'
-import audioSound from '../../assets/desk/audio.mp3'
+import deskView from '/assets/desk/desk.png'
+import audioSound from '/assets/desk/audio.mp3'
 import Modal from '../ui/Modal'
 import Radio from '../ui/Radio'
 import Computer from '../ui/Computer'
@@ -36,13 +36,13 @@ export default function Desk() {
 [${computerUnlocked ? 'X' : ' '}] Unlock terminal`
 
   const [list, setList] = useState<Item[]>([
-    { id: '1', name: 'Log', type: 'doc', x: 320, y: 550, icon: 'src/assets/emojis/doc.png', content: '"Four letters carved into the iron hull, followed by the exact year the abyss answered back. Cornelis thought he could control the depths, for James and his Thames."\n\nWARNING: Do not reply.' },
-    { id: '2', name: 'Audio', type: 'audio', x: 920, y: 600, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
-    { id: '3', name: 'Photo', type: 'photo', x: 180, y: 320, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
-    { id: '4', name: 'Key', type: 'doc', x: 1150, y: 450, icon: 'src/assets/emojis/key.png', content: 'LVTHNXXXX' },
-    { id: '5', name: 'Objectives', type: 'doc', x: 700, y: 350, icon: 'src/assets/emojis/note.png', content: objectivesContent },
-    { id: '6', name: 'Radio', type: 'radio', x: 1000, y: 200, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
-    { id: '7', name: 'Computer', type: 'computer', x: 620, y: 150, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
+    { id: '1', name: 'Log', type: 'doc', x: 320, y: 550, icon: '/assets/emojis/doc.png', content: '"Four letters carved into the iron hull, followed by the exact year the abyss answered back. Cornelis thought he could control the depths, for James and his Thames."\n\nWARNING: Do not reply.' },
+    { id: '2', name: 'Audio', type: 'audio', x: 920, y: 600, icon: '/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
+    { id: '3', name: 'Photo', type: 'photo', x: 180, y: 320, icon: '/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
+    { id: '4', name: 'Key', type: 'doc', x: 1150, y: 450, icon: '/assets/emojis/key.png', content: 'LVTHNXXXX' },
+    { id: '5', name: 'Objectives', type: 'doc', x: 700, y: 350, icon: '/assets/emojis/note.png', content: objectivesContent },
+    { id: '6', name: 'Radio', type: 'radio', x: 1000, y: 200, icon: '/assets/emojis/radio.png', content: 'RADIO_UNIT' },
+    { id: '7', name: 'Computer', type: 'computer', x: 620, y: 150, icon: '/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
   ])
 
   useEffect(() => {

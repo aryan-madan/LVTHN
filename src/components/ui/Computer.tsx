@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import image from '../../assets/desk/computer.png'
-import sound from '../../assets/desk/incorrect.mp3'
-import clickSound from '../../assets/desk/click.mp3'
+import image from '/assets/desk/computer.png'
+import sound from '/assets/desk/incorrect.mp3'
+import clickSound from '/assets/desk/click.mp3'
 
 type Props = {
   close: () => void
