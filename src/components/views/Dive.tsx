@@ -18,7 +18,7 @@ const blocks = [
   { text: "Farewell friend.", align: 'text-center mx-auto' }
 ]
 
-export default function Dive({ open }: Props) {
+export default function Dive({ open: _open }: Props) {
   const [done, setDone] = useState(false)
   const [pct, setPct] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
@@ -36,7 +36,7 @@ export default function Dive({ open }: Props) {
         setDone(true)
         if (!played.current) {
           played.current = true
-          new Audio('src/assets/dive/death.mp3').play().catch(() => { })
+          new Audio('src/assets/dive/death.mp3').play().catch(() => {})
         }
       }
     }
@@ -44,7 +44,7 @@ export default function Dive({ open }: Props) {
 
   function finish() {
     const audio = new Audio('src/assets/dive/death.mp3')
-    audio.play().catch(() => { })
+    audio.play().catch(() => {})
     audio.onended = () => {
       window.close()
     }
@@ -55,19 +55,19 @@ export default function Dive({ open }: Props) {
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center font-mono select-none overflow-hidden">
-      <div
+      <div 
         className="absolute inset-0 bg-gradient-to-b from-cyan-500 via-blue-900 to-black pointer-events-none transition-opacity duration-300"
         style={{ opacity: Math.max(0.05, 1 - pct * 1.1) }}
       />
-      <div
+      <div 
         ref={ref}
         onScroll={check}
         className="w-full max-w-4xl h-full overflow-y-scroll px-12 py-[30vh] space-y-64 no-scrollbar scroll-smooth relative z-10"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {blocks.map((b, i) => (
-          <div
-            key={i}
+          <div 
+            key={i} 
             className={`text-sm tracking-widest leading-relaxed text-cyan-100 max-w-md drop-shadow-[0_0_15px_rgba(34,211,238,0.5)] ${b.align}`}
           >
             {b.text}
