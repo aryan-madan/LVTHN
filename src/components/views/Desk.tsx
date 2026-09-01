@@ -190,7 +190,7 @@ export default function Desk() {
       <style>{`
         @font-face {
           font-family: 'RockyBilly';
-          src: url('src/assets/fonts/rockybilly.ttf') format('truetype');
+          src: url('/assets/fonts/rockybilly.ttf') format('truetype');
         }
         .handwritten {
           font-family: 'RockyBilly', sans-serif;
