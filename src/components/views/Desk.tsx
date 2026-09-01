@@ -36,13 +36,13 @@ export default function Desk() {
 [${computerUnlocked ? 'X' : ' '}] Unlock terminal`
 
   const [list, setList] = useState<Item[]>([
-    { id: '1', name: 'Log', type: 'doc', x: 880, y: 320, icon: 'src/assets/emojis/doc.png', content: '"Four letters carved into the iron hull, followed by the exact year the abyss answered back. Cornelis thought he could control the depths, for James and his Thames."\n\nWARNING: Do not reply.' },
-    { id: '2', name: 'Audio', type: 'audio', x: 1050, y: 480, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
-    { id: '3', name: 'Photo', type: 'photo', x: 720, y: 550, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
-    { id: '4', name: 'Key', type: 'doc', x: 1180, y: 280, icon: 'src/assets/emojis/key.png', content: 'LVTHNXXXX' },
-    { id: '5', name: 'Objectives', type: 'doc', x: 1350, y: 200, icon: 'src/assets/emojis/note.png', content: objectivesContent },
-    { id: '6', name: 'Radio', type: 'radio', x: 950, y: 620, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
-    { id: '7', name: 'Computer', type: 'computer', x: 650, y: 180, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
+    { id: '1', name: 'Log', type: 'doc', x: 420, y: 520, icon: 'src/assets/emojis/doc.png', content: '"Four letters carved into the iron hull, followed by the exact year the abyss answered back. Cornelis thought he could control the depths, for James and his Thames."\n\nWARNING: Do not reply.' },
+    { id: '2', name: 'Audio', type: 'audio', x: 880, y: 620, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
+    { id: '3', name: 'Photo', type: 'photo', x: 280, y: 350, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
+    { id: '4', name: 'Key', type: 'doc', x: 1100, y: 480, icon: 'src/assets/emojis/key.png', content: 'LVTHNXXXX' },
+    { id: '5', name: 'Objectives', type: 'doc', x: 1320, y: 220, icon: 'src/assets/emojis/note.png', content: objectivesContent },
+    { id: '6', name: 'Radio', type: 'radio', x: 1020, y: 320, icon: 'src/assets/emojis/radio.png', content: 'RADIO_UNIT' },
+    { id: '7', name: 'Computer', type: 'computer', x: 720, y: 150, icon: 'src/assets/emojis/computer.png', content: 'COMPUTER_TERMINAL' }
   ])
 
   useEffect(() => {

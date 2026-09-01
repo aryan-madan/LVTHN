@@ -1,52 +1,57 @@
 import { useState, useRef, useEffect } from 'react'
 
 type Props = {
-  text: string
-  label: string
-  next: () => void
+    text: string
+    label: string
+    next: () => void
 }
 
 export default function Story({ text, label, next }: Props) {
-  const [show, setShow] = useState('')
-  const [done, setDone] = useState(false)
-  const indexRef = useRef(0)
+    const [show, setShow] = useState('')
+    const [done, setDone] = useState(false)
+    const indexRef = useRef(0)
 
-  useEffect(() => {
-    indexRef.current = 0
-    setShow('')
-    setDone(false)
+    useEffect(() => {
+        indexRef.current = 0
+        setShow('')
+        setDone(false)
 
-    const timer = setInterval(() => {
-      if (indexRef.current < text.length) {
-        const currentChar = text.charAt(indexRef.current)
-        setShow(prev => prev + currentChar)
-        indexRef.current += 1
-      } else {
-        setDone(true)
-        clearInterval(timer)
-      }
-    }, 25)
+        const timer = setInterval(() => {
+            if (indexRef.current < text.length) {
+                setShow(text.slice(0, indexRef.current + 1))
+                indexRef.current += 1
+            } else {
+                setDone(true)
+                clearInterval(timer)
+            }
+        }, 20)
 
-    return () => clearInterval(timer)
-  }, [text])
+        return () => clearInterval(timer)
+    }, [text])
 
-  return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center p-8 font-mono select-none">
-      <div className="max-w-2xl w-full flex flex-col gap-8">
-        <div className="text-cyan-100 text-sm md:text-base leading-relaxed tracking-wider whitespace-pre-wrap min-h-[220px] drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]">
-          {show}
-          {!done && <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse" />}
+    return (
+        <div className="fixed inset-0 bg-black z-50 flex flex-col justify-between p-12 md:p-24 select-none" style={{ fontFamily: '"Geist Mono", monospace' }}>
+            <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&display=swap');
+      `}</style>
+
+            <div className="max-w-xl w-full mx-auto flex flex-col justify-center flex-grow">
+                <div className="text-zinc-300 text-sm md:text-base leading-loose whitespace-pre-wrap font-normal">
+                    {show}
+                    {!done && <span className="inline-block w-1.5 h-3.5 bg-zinc-400 ml-1 translate-y-0.5 animate-pulse" />}
+                </div>
+            </div>
+
+            <div className="max-w-xl w-full mx-auto flex justify-start">
+                <div className={`transition-all duration-700 ${done ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}`}>
+                    <button
+                        onClick={next}
+                        className="text-zinc-400 hover:text-white text-xs tracking-[0.3em] uppercase transition-colors cursor-pointer bg-transparent border-none p-0 font-normal"
+                    >
+                        [{label}]
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <div className={`transition-opacity duration-500 ${done ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <button
-            onClick={next}
-            className="bg-white text-black font-bold px-8 py-3 text-xs tracking-widest hover:bg-neutral-200 transition-colors cursor-pointer rounded shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-          >
-            {label}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+    )
 }
