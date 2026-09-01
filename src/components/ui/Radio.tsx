@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function Radio({ close, freq }: Props) {
-  const [target, setTarget] = useState<number>(104.2)
+  const [target] = useState<number>(() => +(90.0 + Math.random() * 15.0).toFixed(1))
   const [current, setCurrent] = useState<number>(88.0)
   const [msg, setMsg] = useState(false)
 
@@ -18,8 +18,6 @@ export default function Radio({ close, freq }: Props) {
   const sRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const rnd = +(90.0 + Math.random() * 15.0).toFixed(1)
-    setTarget(rnd)
     cRef.current = new Audio(click)
     gRef.current = new Audio(geiger)
     if (gRef.current) gRef.current.loop = true

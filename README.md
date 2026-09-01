@@ -18,6 +18,7 @@ You are a detective who's investigating a mystery by the name of 'LVTHN'. Your t
 
 This is a small and quick experience, have fun with it lol
 
-PRO TIP: HAVE YOUR VOLUME SET TO 100.
+## AI Usage
+AI was used mainly for debugging stuff and fixing stuffs
 
 Made with ❤️ by Ary

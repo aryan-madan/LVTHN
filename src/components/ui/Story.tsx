@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 type Props = {
   text: string
@@ -9,37 +9,43 @@ type Props = {
 export default function Story({ text, label, next }: Props) {
   const [show, setShow] = useState('')
   const [done, setDone] = useState(false)
-  
+  const indexRef = useRef(0)
+
   useEffect(() => {
-    let i = 0
+    indexRef.current = 0
     setShow('')
     setDone(false)
-    const tmr = setInterval(() => {
-      if (i < text.length) {
-        setShow((p) => p + text.charAt(i))
-        i++
+
+    const timer = setInterval(() => {
+      if (indexRef.current < text.length) {
+        const currentChar = text.charAt(indexRef.current)
+        setShow(prev => prev + currentChar)
+        indexRef.current += 1
       } else {
-        clearInterval(tmr)
         setDone(true)
+        clearInterval(timer)
       }
-    }, 30)
-    return () => clearInterval(tmr)
+    }, 25)
+
+    return () => clearInterval(timer)
   }, [text])
 
   return (
-    <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center p-8 font-mono select-none">
-      <div className="max-w-2xl text-center leading-loose tracking-widest text-sm mb-12 text-white whitespace-pre-wrap min-h-[16rem] flex items-center justify-center">
-        {show}
-      </div>
-      <div className="h-12 flex items-center justify-center">
-        {done && (
-          <button 
-            onClick={next} 
-            className="border border-white/30 px-8 py-2 text-white hover:bg-white hover:text-black transition-colors tracking-widest animate-pulse cursor-pointer"
+    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center p-8 font-mono select-none">
+      <div className="max-w-2xl w-full flex flex-col gap-8">
+        <div className="text-cyan-100 text-sm md:text-base leading-relaxed tracking-wider whitespace-pre-wrap min-h-[220px] drop-shadow-[0_0_10px_rgba(34,211,238,0.3)]">
+          {show}
+          {!done && <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse" />}
+        </div>
+
+        <div className={`transition-opacity duration-500 ${done ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <button
+            onClick={next}
+            className="bg-white text-black font-bold px-8 py-3 text-xs tracking-widest hover:bg-neutral-200 transition-colors cursor-pointer rounded shadow-[0_0_20px_rgba(255,255,255,0.4)]"
           >
             {label}
           </button>
-        )}
+        </div>
       </div>
     </div>
   )
