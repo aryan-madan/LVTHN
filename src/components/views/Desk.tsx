@@ -157,7 +157,7 @@ export default function Desk() {
   if (phase === 'intro') {
     return (
       <Story 
-        text={`PPROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work.`}
+        text={`PPROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work. (TIP: SET YOUR VOLUME TO FULL)`}
         buttonText="START"
         onNext={() => setPhase('desk')} 
       />
