@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import paperBg from '../../assets/desk/paper.png'
-import cassetteBg from '../../assets/desk/cassette.png'
+import paper from '../../assets/desk/paper.png'
+import cassette from '../../assets/desk/cassette.png'
 
 type Props = {
   item: {
@@ -16,26 +16,26 @@ export default function Modal({ item, close }: Props) {
   const [size] = useState(250)
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const move = (e: MouseEvent) => {
       setPos({ x: e.clientX, y: e.clientY })
     }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mousemove', move)
+    return () => window.removeEventListener('mousemove', move)
   }, [])
 
-  const handleClick = (e: React.MouseEvent) => {
+  const click = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       close()
     }
   }
 
-  const photoSource = item.type === 'photo' 
+  const src = item.type === 'photo' 
     ? 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' 
     : item.content
 
   return (
     <div
-      onClick={handleClick}
+      onClick={click}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-6 font-mono cursor-pointer overflow-hidden"
     >
       <div className="absolute inset-0 bg-black z-0 pointer-events-none" />
@@ -43,7 +43,7 @@ export default function Modal({ item, close }: Props) {
       <div className="relative z-10 flex items-center justify-center w-full h-full pointer-events-none">
         {item.type === 'doc' && (
           <div
-            style={{ backgroundImage: `url(${paperBg})` }}
+            style={{ backgroundImage: `url(${paper})` }}
             className="relative w-full max-w-lg text-zinc-900 p-10 pl-16 shadow-2xl -rotate-1 bg-cover bg-center cursor-default pointer-events-auto"
           >
             <div className="text-sm leading-relaxed whitespace-pre-wrap text-zinc-900 pt-4 font-mono">
@@ -54,7 +54,7 @@ export default function Modal({ item, close }: Props) {
 
         {item.type === 'audio' && (
           <div
-            style={{ backgroundImage: `url(${cassetteBg})` }}
+            style={{ backgroundImage: `url(${cassette})` }}
             className="relative w-full max-w-2xl aspect-[1.6/1] p-12 pl-20 text-zinc-900 shadow-2xl bg-cover bg-center cursor-default flex flex-col justify-between pointer-events-auto"
           >
             <div className="mt-2 px-6 pl-10 py-1 overflow-y-auto max-h-[45%] text-xs leading-relaxed text-zinc-900 selection:bg-black selection:text-white pointer-events-auto font-mono">
@@ -66,7 +66,7 @@ export default function Modal({ item, close }: Props) {
         {item.type === 'photo' && (
           <div className="relative w-auto max-w-[90vw] max-h-[90vh] p-1 shadow-2xl rotate-1 bg-black cursor-default border border-zinc-600 pointer-events-auto">
             <img
-              src={photoSource}
+              src={src}
               alt="evidence"
               className="w-auto h-auto max-w-full max-h-[85vh] object-contain block border border-zinc-700"
             />

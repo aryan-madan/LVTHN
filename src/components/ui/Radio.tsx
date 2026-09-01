@@ -1,72 +1,72 @@
 import { useState, useRef, useEffect } from 'react'
-import clickSound from '../../assets/desk/click.mp3'
-import geigerSound from '../../assets/desk/geiger.mp3'
-import staticSound from '../../assets/desk/static.mp3'
+import click from '../../assets/desk/click.mp3'
+import geiger from '../../assets/desk/geiger.mp3'
+import staticAudio from '../../assets/desk/static.mp3'
 
 type Props = {
   close: () => void
-  onFreqFound?: () => void
+  freq: () => void
 }
 
-export default function Radio({ close, onFreqFound }: Props) {
-  const [targetFreq, setTargetFreq] = useState<number>(104.2)
-  const [currentFreq, setCurrentFreq] = useState<number>(88.0)
-  const [message, setMessage] = useState(false)
+export default function Radio({ close, freq }: Props) {
+  const [target, setTarget] = useState<number>(104.2)
+  const [current, setCurrent] = useState<number>(88.0)
+  const [msg, setMsg] = useState(false)
 
-  const clickAudio = useRef<HTMLAudioElement | null>(null)
-  const geigerAudio = useRef<HTMLAudioElement | null>(null)
-  const staticAudio = useRef<HTMLAudioElement | null>(null)
+  const cRef = useRef<HTMLAudioElement | null>(null)
+  const gRef = useRef<HTMLAudioElement | null>(null)
+  const sRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const randomFreq = +(90.0 + Math.random() * 15.0).toFixed(1)
-    setTargetFreq(randomFreq)
-    clickAudio.current = new Audio(clickSound)
-    geigerAudio.current = new Audio(geigerSound)
-    if (geigerAudio.current) geigerAudio.current.loop = true
+    const rnd = +(90.0 + Math.random() * 15.0).toFixed(1)
+    setTarget(rnd)
+    cRef.current = new Audio(click)
+    gRef.current = new Audio(geiger)
+    if (gRef.current) gRef.current.loop = true
 
-    staticAudio.current = new Audio(staticSound)
-    if (staticAudio.current) {
-      staticAudio.current.loop = true
-      staticAudio.current.play().catch(() => { })
+    sRef.current = new Audio(staticAudio)
+    if (sRef.current) {
+      sRef.current.loop = true
+      sRef.current.play().catch(() => {})
     }
 
     return () => {
-      if (staticAudio.current) staticAudio.current.pause()
-      if (geigerAudio.current) geigerAudio.current.pause()
+      if (sRef.current) sRef.current.pause()
+      if (gRef.current) gRef.current.pause()
     }
   }, [])
 
-  function handleSlider(e: React.ChangeEvent<HTMLInputElement>) {
-    const newFreq = parseFloat(e.target.value)
-    setCurrentFreq(newFreq)
+  function slide(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = parseFloat(e.target.value)
+    setCurrent(val)
 
-    if (clickAudio.current) {
-      clickAudio.current.currentTime = 0
-      clickAudio.current.play().catch(() => { })
+    if (cRef.current) {
+      cRef.current.currentTime = 0
+      cRef.current.play().catch(() => {})
     }
 
-    if (Math.abs(newFreq - targetFreq) < 0.2) {
-      setMessage(true)
-      if (onFreqFound) onFreqFound()
-      if (staticAudio.current) staticAudio.current.pause()
-      if (geigerAudio.current) {
-        geigerAudio.current.play().catch(() => { })
+    if (Math.abs(val - target) < 0.2) {
+      setMsg(true)
+      freq()
+      if (sRef.current) sRef.current.pause()
+      if (gRef.current) {
+        gRef.current.play().catch(() => {})
       }
     } else {
-      setMessage(false)
-      if (geigerAudio.current) {
-        geigerAudio.current.pause()
-        geigerAudio.current.currentTime = 0
+      setMsg(false)
+      if (gRef.current) {
+        gRef.current.pause()
+        gRef.current.currentTime = 0
       }
-      if (staticAudio.current) {
-        staticAudio.current.play().catch(() => { })
+      if (sRef.current) {
+        sRef.current.play().catch(() => {})
       }
     }
   }
 
   function handleClose() {
-    if (geigerAudio.current) geigerAudio.current.pause()
-    if (staticAudio.current) staticAudio.current.pause()
+    if (gRef.current) gRef.current.pause()
+    if (sRef.current) sRef.current.pause()
     close()
   }
 
@@ -103,11 +103,11 @@ export default function Radio({ close, onFreqFound }: Props) {
           <div className="bg-black border border-neutral-800 rounded p-4 flex flex-col gap-2">
             <div className="text-xs text-neutral-500 flex justify-between">
               <span>FREQUENCY</span>
-              <span className="text-cyan-400 text-2xl font-bold display-font">{currentFreq.toFixed(1)} MHz</span>
+              <span className="text-cyan-400 text-2xl font-bold display-font">{current.toFixed(1)} MHz</span>
             </div>
 
             <div className="h-10 bg-neutral-950 border border-neutral-800 rounded flex items-center px-3 overflow-hidden">
-              {message ? (
+              {msg ? (
                 <span className="text-red-400 text-lg font-bold display-font tracking-wider animate-marquee">PLEASE FIND ME, I'M NOT DEAD, LVTHN IS ALIVE</span>
               ) : (
                 <span className="text-neutral-600 text-xs tracking-wider">NO SIGNAL</span>
@@ -125,8 +125,8 @@ export default function Radio({ close, onFreqFound }: Props) {
               min="88.0"
               max="108.0"
               step="0.1"
-              value={currentFreq}
-              onChange={handleSlider}
+              value={current}
+              onChange={slide}
               className="w-full accent-cyan-400"
             />
           </div>

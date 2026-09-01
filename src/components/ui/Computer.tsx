@@ -1,28 +1,28 @@
 import { useState, useRef } from 'react'
-import compImage from '../../assets/desk/computer.png'
-import incorrectSound from '../../assets/desk/incorrect.mp3'
+import image from '../../assets/desk/computer.png'
+import sound from '../../assets/desk/incorrect.mp3'
 
 type Props = {
   close: () => void
-  onUnlock?: () => void
+  unlock: () => void
 }
 
-export default function Computer({ close, onUnlock }: Props) {
+export default function Computer({ close, unlock }: Props) {
   const [text, setText] = useState('')
   const [unlocked, setUnlocked] = useState(false)
-  const incorrectAudio = useRef<HTMLAudioElement | null>(null)
+  const ref = useRef<HTMLAudioElement | null>(null)
 
-  function handleUnlock(e: React.FormEvent) {
-    e.preventDefault()
+  function submit(event: React.FormEvent) {
+    event.preventDefault()
     if (text.toUpperCase() === 'PROJLVTHN') {
       setUnlocked(true)
-      if (onUnlock) onUnlock()
+      unlock()
     } else {
-      if (!incorrectAudio.current) {
-        incorrectAudio.current = new Audio(incorrectSound)
+      if (!ref.current) {
+        ref.current = new Audio(sound)
       }
-      incorrectAudio.current.currentTime = 0
-      incorrectAudio.current.play().catch(() => {})
+      ref.current.currentTime = 0
+      ref.current.play().catch(() => {})
     }
   }
 
@@ -32,23 +32,23 @@ export default function Computer({ close, onUnlock }: Props) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 font-mono select-none"
     >
       <div 
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         className="relative w-[95vw] max-w-[1100px] aspect-[1.3/1] flex items-center justify-center"
       >
         <img
-          src={compImage}
-          alt="Computer Monitor"
+          src={image}
+          alt="Monitor"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)]"
         />
 
         <div className="absolute inset-[13%_22%_32%_22%] bg-transparent flex flex-col items-center justify-center p-6 text-black overflow-hidden pointer-events-auto">
           
           {!unlocked ? (
-            <form onSubmit={handleUnlock} className="flex flex-col gap-3 items-center">
+            <form onSubmit={submit} className="flex flex-col gap-3 items-center">
               <input
                 type="text"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(event) => setText(event.target.value)}
                 placeholder="PASSWORD"
                 className="bg-white border-2 border-black px-4 py-2 text-black text-base tracking-widest uppercase focus:outline-none text-center w-64 font-bold"
               />

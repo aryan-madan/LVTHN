@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react'
+import sound from '../../assets/dive/death.mp3'
 
 type Props = {
   open: () => void
 }
 
-const blocks = [
+const list = [
   { text: "I shouldn't have gone down there. I abandoned you.", align: 'text-right ml-auto mr-16' },
   { text: "I got so obsessed with the Leviathan that I forgot about you. I'm sorry.", align: 'text-left ml-24 mr-auto' },
   { text: "I'm almost 5000 meters deep now, I hate myself for this.", align: 'text-center mx-auto' },
@@ -36,14 +37,14 @@ export default function Dive({ open: _open }: Props) {
         setDone(true)
         if (!played.current) {
           played.current = true
-          new Audio('src/assets/dive/death.mp3').play().catch(() => {})
+          new Audio(sound).play().catch(() => {})
         }
       }
     }
   }
 
   function finish() {
-    const audio = new Audio('src/assets/dive/death.mp3')
+    const audio = new Audio(sound)
     audio.play().catch(() => {})
     audio.onended = () => {
       window.close()
@@ -65,7 +66,7 @@ export default function Dive({ open: _open }: Props) {
         className="w-full max-w-4xl h-full overflow-y-scroll px-12 py-[30vh] space-y-64 no-scrollbar scroll-smooth relative z-10"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {blocks.map((b, i) => (
+        {list.map((b, i) => (
           <div 
             key={i} 
             className={`text-sm tracking-widest leading-relaxed text-cyan-100 max-w-md drop-shadow-[0_0_15px_rgba(34,211,238,0.5)] ${b.align}`}

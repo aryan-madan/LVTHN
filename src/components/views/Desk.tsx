@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import view from '../../assets/desk/desk.png'
-import sound from '../../assets/desk/audio.mp3'
+import deskView from '../../assets/desk/desk.png'
+import audioSound from '../../assets/desk/audio.mp3'
 import Modal from '../ui/Modal'
 import Radio from '../ui/Radio'
 import Computer from '../ui/Computer'
@@ -26,7 +26,7 @@ export default function Desk() {
   const [computerUnlocked, setComputerUnlocked] = useState(false)
   const [radioFreqFound, setRadioFreqFound] = useState(false)
 
-  const getObjectivesContent = () => {
+  const buildObjectivesContent = () => {
     return `CASE NOTES:
 [${audioPlayed ? 'X' : ' '}] Listen to audio tape
 [${keyFound ? 'X' : ' '}] Find the project key
@@ -35,7 +35,7 @@ export default function Desk() {
 [${computerUnlocked ? 'X' : ' '}] Unlock terminal`
   }
 
-  const [list, set] = useState<Item[]>([
+  const [list, setList] = useState<Item[]>([
     { id: '1', name: 'Log', type: 'doc', x: 150, y: 180, icon: 'src/assets/emojis/doc.png', content: 'RADIO STATUS: LOST, \nNOTE: Do not respond.' },
     { id: '2', name: 'Audio', type: 'audio', x: 700, y: 220, icon: 'src/assets/emojis/cassette.png', content: '\n[AUDIO TRANSCRIPT]: Low frequency pulse detected.' },
     { id: '3', name: 'Photo', type: 'photo', x: 450, y: 420, icon: 'src/assets/emojis/photo.png', content: 'https://w0.peakpx.com/wallpaper/203/475/HD-wallpaper-video-game-subnautica.jpg' },
@@ -46,34 +46,34 @@ export default function Desk() {
   ])
 
   useEffect(() => {
-    set(prev => prev.map(i => i.id === '5' ? { ...i, content: getObjectivesContent() } : i))
+    setList(prev => prev.map(i => i.id === '5' ? { ...i, content: buildObjectivesContent() } : i))
   }, [audioPlayed, keyFound, radioFound, computerUnlocked, radioFreqFound])
 
-  const [modal, mod] = useState<Item | null>(null)
-  const [show, vis] = useState(false)
-  const [showComp, visComp] = useState(false)
-  const [pos, setpos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
-  const [size, setsz] = useState(600)
+  const [modalItem, setModalItem] = useState<Item | null>(null)
+  const [showRadio, setShowRadio] = useState(false)
+  const [showComputer, setShowComputer] = useState(false)
+  const [position, setPosition] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
+  const [size, setSize] = useState(600)
   
-  const drag = useRef<string | null>(null)
-  const start = useRef({ x: 0, y: 0 })
-  const shift = useRef({ x: 0, y: 0 })
-  const moved = useRef(false)
+  const dragId = useRef<string | null>(null)
+  const startPos = useRef({ x: 0, y: 0 })
+  const shiftPos = useRef({ x: 0, y: 0 })
+  const hasMoved = useRef(false)
 
   useEffect(() => {
     if (phase !== 'desk') return
     
-    let t1 = setTimeout(() => setsz(150), 100)
-    let t2 = setTimeout(() => setsz(400), 200)
-    let t3 = setTimeout(() => setsz(180), 350)
-    let t4 = setTimeout(() => setsz(300), 450)
-    let t5 = setTimeout(() => setsz(220), 600)
+    let t1 = setTimeout(() => setSize(150), 100)
+    let t2 = setTimeout(() => setSize(400), 200)
+    let t3 = setTimeout(() => setSize(180), 350)
+    let t4 = setTimeout(() => setSize(300), 450)
+    let t5 = setTimeout(() => setSize(220), 600)
 
     const flickerInterval = setInterval(() => {
       if (Math.random() > 0.4) {
         const randomSize = Math.floor(Math.random() * 250) + 100
-        setsz(randomSize)
-        setTimeout(() => setsz(220), Math.random() * 120 + 50)
+        setSize(randomSize)
+        setTimeout(() => setSize(220), Math.random() * 120 + 50)
       }
     }, 300)
 
@@ -87,79 +87,79 @@ export default function Desk() {
     }
   }, [phase])
 
-  function play() {
+  function playAudio() {
     setAudioPlayed(true)
     setTimeout(async () => {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
-      const res = await fetch(sound)
-      const buf = await res.arrayBuffer()
-      const dec = await ctx.decodeAudioData(buf)
-      const src = ctx.createBufferSource()
-      src.buffer = dec
-      const gain = ctx.createGain()
-      gain.gain.value = 3.0
-      src.connect(gain)
-      gain.connect(ctx.destination)
-      src.start()
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const response = await fetch(audioSound)
+      const buffer = await response.arrayBuffer()
+      const decoded = await audioContext.decodeAudioData(buffer)
+      const source = audioContext.createBufferSource()
+      source.buffer = decoded
+      const gainNode = audioContext.createGain()
+      gainNode.gain.value = 3.0
+      source.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      source.start()
       setTimeout(() => {
-        src.stop()
-        ctx.close()
+        source.stop()
+        audioContext.close()
       }, 4000)
     }, 2000)
   }
 
-  function down(e: React.MouseEvent, item: Item) {
+  function handleMouseDown(e: React.MouseEvent, item: Item) {
     e.stopPropagation()
-    drag.current = item.id
-    start.current = { x: e.clientX, y: e.clientY }
-    shift.current = { x: e.clientX - item.x, y: e.clientY - item.y }
-    moved.current = false
+    dragId.current = item.id
+    startPos.current = { x: e.clientX, y: e.clientY }
+    shiftPos.current = { x: e.clientX - item.x, y: e.clientY - item.y }
+    hasMoved.current = false
   }
 
-  function move(e: React.MouseEvent) {
+  function handleMouseMove(e: React.MouseEvent) {
     if (phase !== 'desk') return
-    setpos({ x: e.clientX, y: e.clientY })
+    setPosition({ x: e.clientX, y: e.clientY })
 
-    if (!drag.current) return
-    const dist = Math.hypot(e.clientX - start.current.x, e.clientY - start.current.y)
-    if (dist > 3) moved.current = true
-    const newX = e.clientX - shift.current.x
-    const newY = e.clientY - shift.current.y
-    set(list.map(i => i.id === drag.current ? { ...i, x: newX, y: newY } : i))
+    if (!dragId.current) return
+    const distance = Math.hypot(e.clientX - startPos.current.x, e.clientY - startPos.current.y)
+    if (distance > 3) hasMoved.current = true
+    const newX = e.clientX - shiftPos.current.x
+    const newY = e.clientY - shiftPos.current.y
+    setList(list.map(i => i.id === dragId.current ? { ...i, x: newX, y: newY } : i))
   }
 
-  function up(item: Item) {
-    if (!moved.current) {
+  function handleMouseUp(item: Item) {
+    if (!hasMoved.current) {
       if (item.type === 'audio') {
-        play()
+        playAudio()
       } else if (item.type === 'radio') {
-        vis(true)
+        setShowRadio(true)
         setRadioFound(true)
       } else if (item.type === 'computer') {
-        visComp(true)
+        setShowComputer(true)
       } else {
         if (item.id === '4') {
           setKeyFound(true)
         }
-        mod(item)
+        setModalItem(item)
 
         if (item.id === '5' && audioPlayed && keyFound && radioFound && computerUnlocked && radioFreqFound) {
           setTimeout(() => {
-            mod(null)
+            setModalItem(null)
             setPhase('mid')
           }, 400)
         }
       }
     }
-    drag.current = null
+    dragId.current = null
   }
 
   if (phase === 'intro') {
     return (
       <Story 
         text={`PPROLOGUE\n\nI've kinda hit a dead end on the whole LVTHN thing. I don't know what I was chasing. It's been days since I've left this room.\n\nI need to piece together what they were hiding here, I can't just stop.\n\nI should probably check my objectives list... Let's get to work. (TIP: SET YOUR VOLUME TO FULL)`}
-        buttonText="START"
-        onNext={() => setPhase('desk')} 
+        label="START"
+        next={() => setPhase('desk')} 
       />
     )
   }
@@ -168,8 +168,8 @@ export default function Desk() {
     return (
       <Story 
         text={`AAPOTHEOSIS\n\nI don't know what I've found. I don't know what to make of it. The Leviathan wasn't a submarine built in 1620, it was something they created. Something biological?\n\nThe anomaly is miles below the surface. I have to see if it's still down there.\n\nI know this might be stupid but this is my last message before I go down there. I love you.`}
-        buttonText="DIVE"
-        onNext={() => setPhase('dive')} 
+        label="DIVE"
+        next={() => setPhase('dive')} 
       />
     )
   }
@@ -180,8 +180,8 @@ export default function Desk() {
 
   return (
     <main
-      onMouseMove={move}
-      onMouseUp={() => { drag.current = null }}
+      onMouseMove={handleMouseMove}
+      onMouseUp={() => { dragId.current = null }}
       className="relative h-screen w-screen overflow-hidden bg-black select-none font-sans cursor-crosshair"
     >
       <style>{`
@@ -196,7 +196,7 @@ export default function Desk() {
 
       <div className="absolute inset-0 z-0">
         <img
-          src={view}
+          src={deskView}
           draggable={false}
           className="w-full h-full object-cover pointer-events-none select-none brightness-25 contrast-125"
         />
@@ -205,8 +205,8 @@ export default function Desk() {
       {list.map(i => (
         <div
           key={i.id}
-          onMouseDown={e => down(e, i)}
-          onMouseUp={() => up(i)}
+          onMouseDown={e => handleMouseDown(e, i)}
+          onMouseUp={() => handleMouseUp(i)}
           style={{ transform: `translate(${i.x}px, ${i.y}px)` }}
           className="absolute z-10 flex flex-col items-center cursor-grab active:cursor-grabbing p-2"
         >
@@ -225,13 +225,13 @@ export default function Desk() {
       <div
         className="absolute inset-0 z-20 pointer-events-none transition-all duration-75"
         style={{
-          background: `radial-gradient(circle ${size}px at ${pos.x}px ${pos.y}px, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0.99) 100%)`
+          background: `radial-gradient(circle ${size}px at ${position.x}px ${position.y}px, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0.99) 100%)`
         }}
       />
 
-      {modal && <Modal item={modal} close={() => mod(null)} />}
-      {show && <Radio close={() => vis(false)} onFreqFound={() => setRadioFreqFound(true)} />}
-      {showComp && <Computer close={() => visComp(false)} onUnlock={() => setComputerUnlocked(true)} />}
+      {modalItem && <Modal item={modalItem} close={() => setModalItem(null)} />}
+      {showRadio && <Radio close={() => setShowRadio(false)} freq={() => setRadioFreqFound(true)} />}
+      {showComputer && <Computer close={() => setShowComputer(false)} unlock={() => setComputerUnlocked(true)} />}
     </main>
   )
 }
